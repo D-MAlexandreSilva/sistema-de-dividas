@@ -3,49 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-    <title>{% block title %}Xandão Finance{% endblock %}</title>
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
+    <title>{% block titulo %}Xandão Finance{% endblock %}</title>
+    {% block head %}{% endblock %}
 </head>
-
 <body>
 
-    {% block content %}{% endblock %}
+{% block conteudo %}{% endblock %}
 
-    <div id="toast-container"></div>
+<!-- 🔔 TOAST -->
+<div id="toast-container"></div>
 
+<style>
+#toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
+.toast {
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    min-width: 220px;
+    max-width: 320px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    animation: slide-in 0.3s ease, fade-out 0.4s ease 3.6s forwards;
+}
+.toast.success { background: #16a34a; }
+.toast.error   { background: #dc2626; }
+.toast.warning { background: #d97706; }
+
+@keyframes slide-in {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fade-out {
+    from { opacity: 1; }
+    to   { opacity: 0; transform: translateX(60px); }
+}
+</style>
+
+<script>
+function showToast(category, message) {
+    const container = document.getElementById("toast-container");
+    const toast = document.createElement("div");
+    toast.classList.add("toast", category);
+    toast.innerText = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
+const flaskMessages = [
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <script>
-          const flaskMessages = [
-            {% for category, message in messages %}
-              {category: "{{ category }}", message: "{{ message }}"},
-            {% endfor %}
-          ];
-        </script>
-      {% endif %}
+    {% for category, message in messages %}
+        { category: "{{ category }}", message: "{{ message }}" },
+    {% endfor %}
     {% endwith %}
+];
+flaskMessages.forEach(msg => showToast(msg.category, msg.message));
+</script>
 
-    <script>
-    function showToast(category, message) {
-        const container = document.getElementById("toast-container");
+{% block scripts %}{% endblock %}
 
-        const toast = document.createElement("div");
-        toast.classList.add("toast", category);
-        toast.innerText = message;
-
-        container.appendChild(toast);
-
-        setTimeout(() => toast.remove(), 4000);
-    }
-
-    if (typeof flaskMessages !== "undefined") {
-        flaskMessages.forEach(msg => {
-            showToast(msg.category, msg.message);
-        });
-    }
-    </script>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+}
+</script>
 
 </body>
 </html>

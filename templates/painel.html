@@ -1,23 +1,7 @@
-﻿<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+{% extends "base.html" %}
+{% block titulo %}Cadastrar Dívida - Xandão Finance{% endblock %}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="manifest" href="/static/manifest.json">
-
-    <meta name="theme-color" content="#0f172a">
-
-    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
-
-    <title>Cadastrar Dívida</title>
-
-</head>
-
-<body>
-
+{% block conteudo %}
 <div class="container">
 
     <div class="form-card">
@@ -54,7 +38,6 @@
 
         </form>
 
-        <!-- AÇÕES EM BOTÕES (NÃO LINKS MAIS) -->
         <div class="acoes-form">
 
             <a href="/dividas" class="btn-secundario">
@@ -70,12 +53,4 @@
     </div>
 
 </div>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-}
-</script>
-
-</body>
-</html>
+{% endblock %}

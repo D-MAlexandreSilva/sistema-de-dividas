@@ -1,96 +1,66 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
+{% block titulo %}Login - Xandão Finance{% endblock %}
 
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-```
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="manifest" href="/static/manifest.json">
-
-<meta name="theme-color" content="#0f172a">
-
-<link rel="icon"
-      href="{{ url_for('static', filename='icon/icon.png') }}">
-
-<title>Login - Xandão Finance</title>
-```
-
-</head>
-
-<body>
-
+{% block conteudo %}
 <div class="pagina-cadastro">
 
-```
-<div class="lado-esquerdo">
+    <div class="lado-esquerdo">
 
-    <img
-        src="{{ url_for('static', filename='icon/icon.png') }}"
-        class="logo-principal"
-        alt="Xandão Finance">
+        <img
+            src="{{ url_for('static', filename='icon/icon.png') }}"
+            class="logo-principal"
+            alt="Xandão Finance">
 
-    <h1>Xandão Finance</h1>
-
-    <p>
-        Assuma o controle da sua vida financeira.
-        Acompanhe gastos, dívidas e mantenha seus
-        objetivos sempre à vista.
-    </p>
-
-    <div class="versiculo-login">
+        <h1>Xandão Finance</h1>
 
         <p>
-            "Os planos do diligente conduzem à abundância,
-            mas todo precipitado acaba na pobreza."
+            Assuma o controle da sua vida financeira.
+            Acompanhe gastos, dívidas e mantenha seus
+            objetivos sempre à vista.
         </p>
 
-        <span>Provérbios 21:5</span>
+        <div class="versiculo-login">
+
+            <p>
+                "Os planos do diligente conduzem à abundância,
+                mas todo precipitado acaba na pobreza."
+            </p>
+
+            <span>Provérbios 21:5</span>
+
+        </div>
+
+    </div>
+
+    <div class="lado-direito">
+
+        <div class="card-cadastro">
+
+            <h2>Entrar</h2>
+
+            <form action="/login" method="POST">
+
+                <input
+                    type="text"
+                    name="usuario"
+                    placeholder="Usuário"
+                    required>
+
+                <input
+                    type="password"
+                    name="senha"
+                    placeholder="Senha"
+                    required>
+
+                <button type="submit">
+                    Entrar
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
 
 </div>
-
-<div class="lado-direito">
-
-    <div class="card-cadastro">
-
-        <h2>Entrar</h2>
-
-        <form action="/login" method="POST">
-
-            <input
-                type="text"
-                name="usuario"
-                placeholder="Usuário"
-                required>
-
-            <input
-                type="password"
-                name="senha"
-                placeholder="Senha"
-                required>
-
-            <button type="submit">
-                Entrar
-            </button>
-
-        </form>
-
-
-    </div>
-
-</div>
-```
-
-</div>
-
-<script>
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-}
-</script>
-
-</body>
-</html>
+{% endblock %}

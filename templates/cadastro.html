@@ -1,18 +1,15 @@
 {% extends "base.html" %}
+{% block titulo %}Cadastro - Xandão Finance{% endblock %}
 
-{% block title %}Cadastro - Xandão Finance{% endblock %}
-
-{% block content %}
-
+{% block conteudo %}
 <div class="pagina-cadastro">
 
     <!-- 🔵 LADO ESQUERDO -->
     <div class="lado-esquerdo">
 
-        <img
-            src="{{ url_for('static', filename='icon/icon.png') }}"
-            alt="Logo"
-            class="logo-principal">
+        <img src="{{ url_for('static', filename='icon/icon.png') }}"
+             alt="Logo"
+             class="logo-principal">
 
         <h1>Xandão Finance</h1>
 
@@ -30,7 +27,7 @@
 
     </div>
 
-    <!-- 🟢 LADO DIREITO (FORMULÁRIO) -->
+    <!-- 🟢 LADO DIREITO -->
     <div class="lado-direito">
 
         <div class="card-cadastro">
@@ -56,49 +53,4 @@
     </div>
 
 </div>
-
-<!-- 🔔 TOAST NOTIFICATIONS (FLASH DO FLASK) -->
-<div id="toast-container"></div>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <script>
-      const flaskMessages = [
-        {% for category, message in messages %}
-          {category: "{{ category }}", message: "{{ message }}"},
-        {% endfor %}
-      ];
-    </script>
-  {% endif %}
-{% endwith %}
-
-<script>
-function showToast(category, message) {
-    const container = document.getElementById("toast-container");
-
-    const toast = document.createElement("div");
-    toast.classList.add("toast", category);
-    toast.innerText = message;
-
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.remove();
-    }, 4000);
-}
-
-if (typeof flaskMessages !== "undefined") {
-    flaskMessages.forEach(msg => {
-        showToast(msg.category, msg.message);
-    });
-}
-</script>
-
-<!-- 📱 SERVICE WORKER -->
-<script>
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-}
-</script>
-
 {% endblock %}

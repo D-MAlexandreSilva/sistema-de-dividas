@@ -92,10 +92,10 @@ def cadastro():
     sucesso = b.cadastrar_usuario(usuario, senha_hash)
 
     if sucesso:
-        flash("UsuÃ¡rio cadastrado com sucesso!", "success")
+        flash("Usuário cadastrado com sucesso!", "success")
         return redirect("/login")
     else:
-        flash("Erro ao cadastrar usuÃ¡rio jÃ¡ existe.", "error")
+        flash("Erro ao cadastrar usuário, já existe.", "error")
         return redirect(f"/")
     
 @app.route("/login")
@@ -111,10 +111,10 @@ def logando():
 
     if resultado:
         session["usuario_id"] = resultado
-        flash("Bem Vindo ao sistema de controle de dividas...!", "success")
+        flash("Bem Vindo ao sistema de controle de dívidas!", "success")
         return redirect("/menu")
     else:
-        flash("UsuÃ¡rio ou Senha, InvÃ¡lidos!", "success")
+        flash("Usuário ou Senha inválidos!", "error")
         return redirect("/login")
     
 from datetime import date
@@ -230,7 +230,7 @@ def editar(id):
         if sucesso:
             return redirect("/dividas")
         else:
-            return "Erro ao editar dÃ­vida"
+            return "Erro ao editar dívida"
 
     divida = b.buscar_divida(id, usuario_id)
 
@@ -416,4 +416,3 @@ def save_subscription():
 if __name__ == "__main__":
     iniciar_agendador_push()
     app.run(host="0.0.0.0", port=5000)
-

@@ -1,23 +1,11 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
+{% block titulo %}Dívidas - Xandão Finance{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="manifest" href="/static/manifest.json">
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
 
-    <meta name="theme-color" content="#0f172a">
-
-    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
-
-    <title>Dívidas - Xandão Finance</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-
-<body>
-
+{% block conteudo %}
 <div class="container">
 
     <div class="topo-pagina">
@@ -108,7 +96,9 @@
     </div>
 
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
 const dados = {{ grafico | tojson | safe }};
 
@@ -139,11 +129,9 @@ new Chart(document.getElementById("grafico"), {
             tooltip: {
                 callbacks: {
                     label: function(context) {
-
                         const total = context.dataset.data.reduce((a,b)=>a+b,0);
                         const valor = context.raw;
                         const porcentagem = ((valor / total) * 100).toFixed(1);
-
                         return `${context.label}: R$ ${valor.toFixed(2)} (${porcentagem}%)`;
                     }
                 }
@@ -152,6 +140,4 @@ new Chart(document.getElementById("grafico"), {
     }
 });
 </script>
-
-</body>
-</html>
+{% endblock %}

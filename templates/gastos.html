@@ -1,25 +1,11 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+{% extends "base.html" %}
+{% block titulo %}Gastos - Xandão Finance{% endblock %}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="manifest" href="/static/manifest.json">
-
-    <meta name="theme-color" content="#0f172a">
-
-    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
-
-    <title>Gastos - Xandão Finance</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-</head>
-
-<body>
-
+{% block conteudo %}
 <div class="container">
 
     <!-- HEADER -->
@@ -115,15 +101,9 @@
     </div>
 
 </div>
+{% endblock %}
 
-<!-- SERVICE WORKER -->
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-}
-</script>
-
-<!-- GRAFICO -->
+{% block scripts %}
 <script>
 const ctx = document.getElementById('graficoGastos');
 
@@ -160,6 +140,4 @@ new Chart(ctx, {
     }
 });
 </script>
-
-</body>
-</html>
+{% endblock %}
