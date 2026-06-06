@@ -1,24 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="manifest" href="/static/manifest.json">
+{% block title %}Cadastro - Xandão Finance{% endblock %}
 
-    <meta name="theme-color" content="#0f172a">
-
-    <link rel="icon"
-          href="{{ url_for('static', filename='icon/icon.png') }}">
-
-    <title>Cadastro - Xandão Finance</title>
-</head>
-
-<body>
+{% block content %}
 
 <div class="pagina-cadastro">
 
+    <!-- 🔵 LADO ESQUERDO -->
     <div class="lado-esquerdo">
 
         <img
@@ -30,38 +18,19 @@
 
         <p>
             Controle seus gastos, acompanhe suas dívidas
-            e mantenha suas finanças organizadas em um
-            só lugar.
+            e mantenha suas finanças organizadas em um só lugar.
         </p>
 
         <div class="beneficios">
-
-            <div class="beneficio">
-                💰 Controle financeiro
-            </div>
-
-            <div class="beneficio">
-                📊 Relatórios e gráficos
-            </div>
-
-            <div class="beneficio">
-                🔔 Notificações automáticas
-            </div>
-
-            <div class="beneficio">
-                🔒 Segurança dos dados
-            </div>
-
+            <div class="beneficio">💰 Controle financeiro</div>
+            <div class="beneficio">📊 Relatórios e gráficos</div>
+            <div class="beneficio">🔔 Notificações automáticas</div>
+            <div class="beneficio">🔒 Segurança dos dados</div>
         </div>
 
     </div>
 
-    {% extends "base.html" %}
-
-    {% block title %}Cadastro{% endblock %}
-
-    {% block content %}
-
+    <!-- 🟢 LADO DIREITO (FORMULÁRIO) -->
     <div class="lado-direito">
 
         <div class="card-cadastro">
@@ -70,21 +39,11 @@
 
             <form action="/cadastro" method="POST">
 
-                <input
-                    type="text"
-                    name="usuario"
-                    placeholder="Usuário"
-                    required>
+                <input type="text" name="usuario" placeholder="Usuário" required>
 
-                <input
-                    type="password"
-                    name="senha"
-                    placeholder="Senha"
-                    required>
+                <input type="password" name="senha" placeholder="Senha" required>
 
-                <button type="submit">
-                    Criar Conta
-                </button>
+                <button type="submit">Criar Conta</button>
 
             </form>
 
@@ -92,19 +51,54 @@
                 Já possui uma conta? Entrar
             </a>
 
-           
-
         </div>
 
     </div>
 
 </div>
 
+<!-- 🔔 TOAST NOTIFICATIONS (FLASH DO FLASK) -->
+<div id="toast-container"></div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <script>
+      const flaskMessages = [
+        {% for category, message in messages %}
+          {category: "{{ category }}", message: "{{ message }}"},
+        {% endfor %}
+      ];
+    </script>
+  {% endif %}
+{% endwith %}
+
+<script>
+function showToast(category, message) {
+    const container = document.getElementById("toast-container");
+
+    const toast = document.createElement("div");
+    toast.classList.add("toast", category);
+    toast.innerText = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
+}
+
+if (typeof flaskMessages !== "undefined") {
+    flaskMessages.forEach(msg => {
+        showToast(msg.category, msg.message);
+    });
+}
+</script>
+
+<!-- 📱 SERVICE WORKER -->
 <script>
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js');
 }
 </script>
 
-</body>
-</html>
+{% endblock %}

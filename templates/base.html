@@ -13,7 +13,6 @@
 
     {% block content %}{% endblock %}
 
-    <!-- 🔔 TOAST (GLOBAL) -->
     <div id="toast-container"></div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -38,9 +37,7 @@
 
         container.appendChild(toast);
 
-        setTimeout(() => {
-            toast.remove();
-        }, 4000);
+        setTimeout(() => toast.remove(), 4000);
     }
 
     if (typeof flaskMessages !== "undefined") {
