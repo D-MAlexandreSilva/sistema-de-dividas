@@ -25,19 +25,15 @@
 
         <form method="POST" class="form-card-mini">
             <input type="hidden" name="acao" value="saldo">
-
             <input type="number" step="0.01" name="valor_saldo" placeholder="Adicionar saldo">
-
             <button type="submit">+ Saldo</button>
         </form>
 
         <form method="POST" class="form-card-mini">
             <input type="hidden" name="acao" value="gasto">
-
             <input type="text" name="nome" placeholder="Nome" required>
             <input type="text" name="descricao" placeholder="Descrição" required>
             <input type="number" step="0.01" name="valor" placeholder="Valor" required>
-
             <button type="submit">Salvar Gasto</button>
         </form>
 
@@ -105,6 +101,13 @@
 
 {% block scripts %}
 <script>
+function formatarReal(valor) {
+    return 'R$ ' + Number(valor).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
 const ctx = document.getElementById('graficoGastos');
 
 new Chart(ctx, {
@@ -112,29 +115,59 @@ new Chart(ctx, {
     data: {
         labels: {{ dias|tojson }},
         datasets: [{
-            label: 'Gastos (R$)',
+            label: 'Gastos',
             data: {{ valores|tojson }},
             borderColor: '#d4af37',
             backgroundColor: 'rgba(212,175,55,0.1)',
             tension: 0.4,
-            fill: true
+            fill: true,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#d4af37'
         }]
     },
     options: {
         responsive: true,
+        interaction: {
+            mode: 'index',
+            intersect: false
+        },
         plugins: {
             legend: {
                 labels: {
                     color: '#e2e8f0'
                 }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return ' ' + formatarReal(context.raw);
+                    },
+                    title: function(context) {
+                        return 'Dia ' + context[0].label;
+                    }
+                }
             }
         },
         scales: {
             x: {
-                ticks: { color: '#94a3b8' }
+                ticks: {
+                    color: '#94a3b8'
+                },
+                grid: {
+                    color: 'rgba(148,163,184,0.1)'
+                }
             },
             y: {
-                ticks: { color: '#94a3b8' }
+                ticks: {
+                    color: '#94a3b8',
+                    callback: function(valor) {
+                        return formatarReal(valor);
+                    }
+                },
+                grid: {
+                    color: 'rgba(148,163,184,0.1)'
+                }
             }
         }
     }

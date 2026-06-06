@@ -84,8 +84,8 @@ def home():
 
 @app.route("/cadastro", methods=["POST"])
 def cadastro():
-    usuario = request.form['usuario'].strip()
-    senha = request.form['senha'].strip()
+    usuario = request.form['usuario'].lower().strip()
+    senha = request.form['senha'].lower().strip()
 
     senha_hash = bcrypt.hashpw(senha.encode(), bcrypt.gensalt()).decode('utf-8')
 
@@ -104,8 +104,8 @@ def logar():
 
 @app.route("/login", methods=["POST"])
 def logando():
-    usuario = request.form['usuario'].strip()
-    senha = request.form['senha'].strip()
+    usuario = request.form['usuario'].lower().strip()
+    senha = request.form['senha'].lower().strip()
 
     resultado = b.login(usuario, senha)
 

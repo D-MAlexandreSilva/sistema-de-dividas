@@ -65,6 +65,21 @@
 
     </div>
 
+    <!-- BOTÃO INSTALAR (Android / Desktop) -->
+    <div id="instalar-app" style="display:none; text-align:center; margin-top: 1.5rem;">
+        <button id="btn-instalar" onclick="instalarApp()">
+            📲 Instalar App
+        </button>
+    </div>
+
+    <!-- INSTRUÇÃO IPHONE -->
+    <div id="instalar-ios" style="display:none; text-align:center; margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px;">
+        <p style="margin: 0 0 6px;">📲 <strong>Instalar no iPhone:</strong></p>
+        <p style="margin: 0; font-size: 14px; opacity: 0.8;">
+            Toque em <strong>Compartilhar</strong> (ícone de caixa com seta) → <strong>Adicionar à Tela de Início</strong>
+        </p>
+    </div>
+
     <div class="frase-final">
 
         <h3>
@@ -75,4 +90,36 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let deferredPrompt;
+
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone === true;
+
+if (isIOS && !isStandalone) {
+    document.getElementById('instalar-ios').style.display = 'block';
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('instalar-app').style.display = 'block';
+});
+
+function instalarApp() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        document.getElementById('instalar-app').style.display = 'none';
+    });
+}
+
+window.addEventListener('appinstalled', () => {
+    document.getElementById('instalar-app').style.display = 'none';
+});
+</script>
 {% endblock %}

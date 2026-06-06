@@ -19,15 +19,7 @@
         <h2>Distribuição das Dívidas</h2>
 
         <div class="grafico-wrapper">
-
             <canvas id="grafico"></canvas>
-
-            <div class="centro-grafico">
-                <span>Total do mês</span>
-
-                <h3>R$ {{ "%.2f"|format(total_mes) }}</h3>
-            </div>
-
         </div>
 
     </div>
@@ -101,12 +93,33 @@
 {% block scripts %}
 <script>
 const dados = {{ grafico | tojson | safe }};
+const totalMes = {{ total_mes }};
 
 const labels = dados.map(i => i[0]);
 const valores = dados.map(i => Number(i[1]));
 
+const centerPlugin = {
+    id: 'centerText',
+    afterDraw(chart) {
+        const { ctx, chartArea: { top, bottom, left, right } } = chart;
+        const cx = (left + right) / 2;
+        const cy = (top + bottom) / 2;
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '13px sans-serif';
+        ctx.fillText('Total do mês', cx, cy - 13);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '600 20px sans-serif';
+        ctx.fillText('R$ ' + totalMes.toFixed(2), cx, cy + 13);
+        ctx.restore();
+    }
+};
+
 new Chart(document.getElementById("grafico"), {
     type: "doughnut",
+    plugins: [centerPlugin],
     data: {
         labels: labels,
         datasets: [{
@@ -118,7 +131,7 @@ new Chart(document.getElementById("grafico"), {
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: "70%",
+        cutout: "72%",
         plugins: {
             legend: {
                 position: "bottom",
