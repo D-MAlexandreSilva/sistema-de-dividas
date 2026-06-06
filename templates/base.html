@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <title>{% block title %}Xandão Finance{% endblock %}</title>
+</head>
+
+<body>
+
+    {% block content %}{% endblock %}
+
+    <!-- 🔔 TOAST (GLOBAL) -->
+    <div id="toast-container"></div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <script>
+          const flaskMessages = [
+            {% for category, message in messages %}
+              {category: "{{ category }}", message: "{{ message }}"},
+            {% endfor %}
+          ];
+        </script>
+      {% endif %}
+    {% endwith %}
+
+    <script>
+    function showToast(category, message) {
+        const container = document.getElementById("toast-container");
+
+        const toast = document.createElement("div");
+        toast.classList.add("toast", category);
+        toast.innerText = message;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 4000);
+    }
+
+    if (typeof flaskMessages !== "undefined") {
+        flaskMessages.forEach(msg => {
+            showToast(msg.category, msg.message);
+        });
+    }
+    </script>
+
+</body>
+</html>
