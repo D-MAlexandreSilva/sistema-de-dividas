@@ -115,7 +115,7 @@ def logando():
         return redirect("/menu")
     else:
         flash("Usuário ou Senha inválidos!", "error")
-        return redirect("/login")
+        return redirect("/cadastro")
     
 from datetime import date
 
@@ -152,10 +152,12 @@ def painel():
 
         if sucesso:
             flash("Dívida cadastrada com sucesso!", "success")
+            return redirect("/dividas")
         else:
             flash("Erro no cadastro da Divida!", "error")
+            return redirect("/painel")
 
-        return redirect("/painel")
+        
 
     dividas = b.listar(session["usuario_id"])
 
