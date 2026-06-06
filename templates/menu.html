@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+
+    <meta name="theme-color" content="#0f172a">
+
+    <link rel="icon"
+          href="{{ url_for('static', filename='icon/icon.png') }}">
+
+    <title>Xandão Finance</title>
+
+</head>
+<body>
+
+<div class="home">
+
+    <div class="hero">
+
+        <img
+            src="{{ url_for('static', filename='icon/icon.png') }}"
+            class="hero-logo"
+            alt="Xandão Finance">
+
+        <h1>Xandão Finance</h1>
+
+        <p class="hero-subtitulo">
+            Controle suas dívidas, organize seus gastos e
+            acompanhe sua vida financeira de forma simples.
+        </p>
+
+    </div>
+
+    <div class="versiculo">
+
+        <p class="texto-versiculo">
+            "Na casa do sábio há comida e azeite armazenados,
+            mas o tolo devora tudo o que pode."
+        </p>
+
+        <span>Provérbios 21:20</span>
+
+    </div>
+
+    <div class="cards-menu">
+
+        <a href="/painel" class="card-menu">
+
+            <div class="icone">
+                📅
+            </div>
+
+            <h2>Dívidas</h2>
+
+            <p>
+                Controle vencimentos,
+                pagamentos e parcelas.
+            </p>
+
+        </a>
+
+        <a href="/gastos" class="card-menu">
+
+            <div class="icone">
+                💰
+            </div>
+
+            <h2>Gastos</h2>
+
+            <p>
+                Registre despesas e
+                acompanhe sua evolução.
+            </p>
+
+        </a>
+
+    </div>
+
+    <div class="frase-final">
+
+        <h3>
+            Pequenas decisões hoje,
+            grandes resultados amanhã.
+        </h3>
+
+    </div>
+
+</div>
+
+<script>
+if ('serviceWorker' in navigator') {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
+
+</body>
+</html>

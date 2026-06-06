@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+
+    <meta name="theme-color" content="#0f172a">
+
+    <link rel="icon"
+          href="{{ url_for('static', filename='icon/icon.png') }}">
+
+    <title>Cadastro - Xandão Finance</title>
+</head>
+
+<body>
+
+<div class="pagina-cadastro">
+
+    <div class="lado-esquerdo">
+
+        <img
+            src="{{ url_for('static', filename='icon/icon.png') }}"
+            alt="Logo"
+            class="logo-principal">
+
+        <h1>Xandão Finance</h1>
+
+        <p>
+            Controle seus gastos, acompanhe suas dívidas
+            e mantenha suas finanças organizadas em um
+            só lugar.
+        </p>
+
+        <div class="beneficios">
+
+            <div class="beneficio">
+                💰 Controle financeiro
+            </div>
+
+            <div class="beneficio">
+                📊 Relatórios e gráficos
+            </div>
+
+            <div class="beneficio">
+                🔔 Notificações automáticas
+            </div>
+
+            <div class="beneficio">
+                🔒 Segurança dos dados
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="lado-direito">
+
+        <div class="card-cadastro">
+
+            <h2>Criar Conta</h2>
+
+            <form action="/cadastro" method="POST">
+
+                <input
+                    type="text"
+                    name="usuario"
+                    placeholder="Usuário"
+                    required>
+
+                <input
+                    type="password"
+                    name="senha"
+                    placeholder="Senha"
+                    required>
+
+                <button type="submit">
+                    Criar Conta
+                </button>
+
+            </form>
+
+            <a href="/login" class="link-login">
+                Já possui uma conta? Entrar
+            </a>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+}
+</script>
+
+</body>
+</html>

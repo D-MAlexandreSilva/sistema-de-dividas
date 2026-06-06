@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+
+    <meta name="theme-color" content="#0f172a">
+
+    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
+
+    <title>Dívidas - Xandão Finance</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topo-pagina">
+        <h1>📊 Dívidas</h1>
+        <p>Organize e acompanhe sua vida financeira</p>
+    </div>
+
+    <!-- CARD GRAFICO -->
+    <div class="card-grafico">
+
+        <h2>Distribuição das Dívidas</h2>
+
+        <div class="grafico-wrapper">
+
+            <canvas id="grafico"></canvas>
+
+            <div class="centro-grafico">
+                <span>Total do mês</span>
+
+                <h3>R$ {{ "%.2f"|format(total_mes) }}</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filtros">
+        <a href="/dividas">Todas</a>
+        <a href="/dividas?tipo=Pessoais">Pessoais</a>
+        <a href="/dividas?tipo=Contas da casa">Casa</a>
+        <a href="/dividas?tipo=Transporte">Transporte</a>
+        <a href="/dividas?tipo=Educação">Educação</a>
+        <a href="/dividas?tipo=Cartão de credito">Cartão</a>
+    </div>
+
+    <!-- LISTA -->
+    <div class="lista-dividas">
+
+        {% for d in dividas %}
+
+        <div class="divida-card">
+
+            <h3>{{ d[3] }}</h3>
+
+            <div class="info">
+                <p>📌 {{ d[2] }}</p>
+                <p>💰 R$ {{ d[4] }}</p>
+                <p>📦 {{ d[6] }}/{{ d[5] }} parcelas</p>
+                <p>📅 Vencimento: {{ d[7] }}</p>
+                <p>📊 Status: {{ d[8] }}</p>
+
+                <p class="total">💵 Total: R$ {{ d[9] }}</p>
+                <p>✅ Pago: R$ {{ d[10] }}</p>
+                <p>⏳ Falta: R$ {{ d[11] }}</p>
+            </div>
+
+            <div class="botoes">
+
+                <a class="btn editar" href="/editar/{{ d[0] }}">
+                    Editar
+                </a>
+
+                <form action="/excluir/{{ d[0] }}" method="POST">
+                    <button class="btn excluir"
+                        onclick="return confirm('Tem certeza?')">
+                        Excluir
+                    </button>
+                </form>
+
+                <form action="/pagar/{{ d[0] }}" method="POST">
+                    <button class="btn pagar"
+                        onclick="return confirm('Marcar como paga?')">
+                        Pagar
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="voltar">
+        <a href="/menu">⬅ Voltar ao Menu</a>
+    </div>
+
+</div>
+
+<script>
+const dados = {{ grafico | tojson | safe }};
+
+const labels = dados.map(i => i[0]);
+const valores = dados.map(i => Number(i[1]));
+
+new Chart(document.getElementById("grafico"), {
+    type: "doughnut",
+    data: {
+        labels: labels,
+        datasets: [{
+            data: valores,
+            borderWidth: 0,
+            hoverOffset: 10
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "70%",
+        plugins: {
+            legend: {
+                position: "bottom",
+                labels: {
+                    color: "#e2e8f0"
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+
+                        const total = context.dataset.data.reduce((a,b)=>a+b,0);
+                        const valor = context.raw;
+                        const porcentagem = ((valor / total) * 100).toFixed(1);
+
+                        return `${context.label}: R$ ${valor.toFixed(2)} (${porcentagem}%)`;
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>

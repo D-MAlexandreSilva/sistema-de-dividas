@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+
+    <meta name="theme-color" content="#0f172a">
+
+    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
+
+    <title>Gastos - Xandão Finance</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="topo-pagina">
+        <h1>💰 Controle de Gastos</h1>
+        <p>Gerencie seu dinheiro com inteligência</p>
+    </div>
+
+    <!-- SALDO -->
+    <div class="saldo-card">
+        <h2>Saldo Atual</h2>
+        <p>R$ {{ saldo }}</p>
+    </div>
+
+    <!-- FORMULARIOS -->
+    <div class="form-grid">
+
+        <form method="POST" class="form-card-mini">
+            <input type="hidden" name="acao" value="saldo">
+
+            <input type="number" step="0.01" name="valor_saldo" placeholder="Adicionar saldo">
+
+            <button type="submit">+ Saldo</button>
+        </form>
+
+        <form method="POST" class="form-card-mini">
+            <input type="hidden" name="acao" value="gasto">
+
+            <input type="text" name="nome" placeholder="Nome" required>
+            <input type="text" name="descricao" placeholder="Descrição" required>
+            <input type="number" step="0.01" name="valor" placeholder="Valor" required>
+
+            <button type="submit">Salvar Gasto</button>
+        </form>
+
+    </div>
+
+    <!-- CARDS RESUMO -->
+    <div class="cards">
+
+        <div class="card">
+            <h3>Hoje</h3>
+            <small>{{ data_hoje }}</small>
+            <p>R$ {{ gasto_dia }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Semana</h3>
+            <small>{{ inicio_semana }} - {{ fim_semana }}</small>
+            <p>R$ {{ gasto_semana }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Mês</h3>
+            <small>{{ mes_atual }}</small>
+            <p>R$ {{ gasto_mes }}</p>
+        </div>
+
+    </div>
+
+    <!-- GRAFICO -->
+    <div class="grafico-card">
+        <h3>📊 Gastos por Dia</h3>
+        <canvas id="graficoGastos"></canvas>
+    </div>
+
+    <!-- HISTORICO -->
+    <h2 class="titulo-historico">Histórico de Gastos</h2>
+
+    <div class="lista-gastos">
+
+        {% for g in gastos %}
+        <div class="gasto-card">
+
+            <h3>{{ g.nome }}</h3>
+
+            <p>{{ g.descricao }}</p>
+
+            <span>💰 R$ {{ g.valor }}</span>
+
+            <small>
+                📅 {{ g.data.strftime('%d/%m/%Y %H:%M') if g.data else '' }}
+            </small>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- VOLTAR -->
+    <div class="voltar">
+        <a href="/menu">⬅ Voltar ao Menu</a>
+    </div>
+
+</div>
+
+<!-- SERVICE WORKER -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
+
+<!-- GRAFICO -->
+<script>
+const ctx = document.getElementById('graficoGastos');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ dias|tojson }},
+        datasets: [{
+            label: 'Gastos (R$)',
+            data: {{ valores|tojson }},
+            borderColor: '#d4af37',
+            backgroundColor: 'rgba(212,175,55,0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#e2e8f0'
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#94a3b8' }
+            },
+            y: {
+                ticks: { color: '#94a3b8' }
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>

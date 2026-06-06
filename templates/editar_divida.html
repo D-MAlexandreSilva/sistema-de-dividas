@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+
+    <meta name="theme-color" content="#0f172a">
+
+    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
+
+    <title>Editar Dívida</title>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="form-card">
+
+        <h1>✏️ Editar Dívida</h1>
+
+        <p class="subtitulo">
+            Atualize as informações da sua dívida
+        </p>
+
+        <form action="/editar/{{ divida[0] }}" method="POST">
+
+            <select name="tipo">
+
+                <option value="Contas da casa">Contas da casa</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Cartão de credito">Cartão de credito</option>
+                <option value="Educação">Educação</option>
+                <option value="Pessoais">Pessoais</option>
+
+            </select>
+
+            <input type="text"
+                   name="descricao"
+                   value="{{ divida[3] }}"
+                   placeholder="Descrição"
+                   required>
+
+            <input type="number"
+                   name="valor"
+                   step="0.01"
+                   min="0"
+                   value="{{ divida[4] }}"
+                   placeholder="Valor"
+                   required>
+
+            <input type="number"
+                   name="parcelas_total"
+                   min="1"
+                   value="{{ divida[5] }}"
+                   placeholder="Parcelas"
+                   required>
+
+            <label>Data de vencimento</label>
+
+            <input type="date"
+                   name="vencimento"
+                   value="{{ divida[7] }}"
+                   required>
+
+            <button type="submit">
+                Salvar Alterações
+            </button>
+
+        </form>
+
+        <div class="acoes-form">
+
+            <a href="/dividas" class="btn-secundario">
+                📊 Voltar para dívidas
+            </a>
+
+            <a href="/menu" class="btn-terciario">
+                ⬅ Voltar ao menu
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
+
+</body>
+</html>

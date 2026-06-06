@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="/static/manifest.json">
+
+    <meta name="theme-color" content="#0f172a">
+
+    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
+
+    <title>Cadastrar Dívida</title>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="form-card">
+
+        <h1>📌 Nova Dívida</h1>
+
+        <p class="subtitulo">
+            Adicione uma nova dívida ao seu controle financeiro
+        </p>
+
+        <form action="/painel" method="POST">
+
+            <select name="tipo">
+                <option>Contas da casa</option>
+                <option>Transporte</option>
+                <option>Cartão de credito</option>
+                <option>Educação</option>
+                <option>Pessoais</option>
+            </select>
+
+            <input type="text" name="descricao" placeholder="Descrição" required>
+
+            <input type="number" name="valor" step="0.01" min="0" placeholder="Valor da parcela" required>
+
+            <input type="number" name="parcelas_total" min="1" placeholder="Parcelas" required>
+
+            <label>Vencimento</label>
+
+            <input type="date" name="vencimento" required>
+
+            <button type="submit">
+                Salvar Dívida
+            </button>
+
+        </form>
+
+        <!-- AÇÕES EM BOTÕES (NÃO LINKS MAIS) -->
+        <div class="acoes-form">
+
+            <a href="/dividas" class="btn-secundario">
+                📊 Ver dívidas do mês
+            </a>
+
+            <a href="/menu" class="btn-terciario">
+                ⬅ Voltar ao menu
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
+
+</body>
+</html>
