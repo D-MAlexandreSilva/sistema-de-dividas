@@ -3,5 +3,5 @@ gunicorn
 psycopg2-binary
 bcrypt
 pywebpush
-requests
 python-dateutil
+requests
