@@ -84,18 +84,21 @@ def home():
 
 @app.route("/cadastro", methods=["POST"])
 def cadastro():
-    usuario = request.form['usuario'].strip()
+    email = request.form['email'].strip()
+    if not email or "@" not in email or "." not in email.split("@")[-1]:
+        flash("Erro, email inválido", "error")
+        return redirect(f"/")
     senha = request.form['senha'].strip()
 
     senha_hash = bcrypt.hashpw(senha.encode(), bcrypt.gensalt()).decode('utf-8')
 
-    sucesso = b.cadastrar_usuario(usuario, senha_hash)
+    sucesso = b.cadastrar_usuario(email, senha_hash)
 
     if sucesso:
-        flash("UsuÃ¡rio cadastrado com sucesso!", "success")
+        flash("Usuário cadastrado com sucesso!", "success")
         return redirect("/login")
     else:
-        flash("Erro ao cadastrar usuÃ¡rio jÃ¡ existe.", "error")
+        flash("Erro ao cadastrar usuário já existe.", "error")
         return redirect(f"/")
     
 @app.route("/login")
@@ -104,20 +107,63 @@ def logar():
 
 @app.route("/login", methods=["POST"])
 def logando():
-    usuario = request.form['usuario'].strip()
+    email = request.form['email'].strip()
     senha = request.form['senha'].strip()
 
-    resultado = b.login(usuario, senha)
+    resultado = b.login(email, senha)
 
     if resultado:
         session["usuario_id"] = resultado
         flash("Bem Vindo ao sistema de controle de dividas...!", "success")
         return redirect("/menu")
     else:
-        flash("UsuÃ¡rio ou Senha, InvÃ¡lidos!", "success")
+        flash("Falha ao entrar!, email ou senha incorretos!", "error")
         return redirect("/login")
     
 from datetime import date
+
+@app.route("/buscar_email", methods=["GET"])
+def pagina_buscar_email():
+    return render_template("buscar_email.html")
+
+@app.route("/buscar_email", methods=['POST'])
+def buscar_email():
+
+    email = request.form['email']
+
+    usuario = b.buscar_email(email)
+    if not usuario:
+        flash("Usuário não encontrado!", "error")
+        return redirect("/buscar_email")
+
+    id_usuario = usuario[0]
+    session["usuario_id"] = id_usuario
+
+    return redirect("/esqueci_senha")
+
+@app.route("/esqueci_senha", methods=["GET"])
+def pagina_esqueci_senha():
+    return render_template("esqueci_senha.html")
+
+
+@app.route("/esqueci_senha", methods=['POST'])
+def esqueci_senha():
+
+    nova_senha = request.form["nova_senha"]
+
+    senha_hash = bcrypt.hashpw(nova_senha.encode(), bcrypt.gensalt()).decode('utf-8')
+
+    id_usuario = session["usuario_id"]
+
+    sucesso = b.alterar_senha(id_usuario, senha_hash)
+    if sucesso:
+        flash("senha alterada com sucesso!", "success")
+        return redirect("/login")
+    else:
+        flash("Falha ao alterar a senha!", "error")
+        return redirect("/esqueci_senha")
+
+
 
 @app.route("/menu")
 def menu():

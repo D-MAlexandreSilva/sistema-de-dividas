@@ -153,5 +153,37 @@ new Chart(document.getElementById("grafico"), {
 });
 </script>
 
+<div id="toast-container"></div>
+
+<script>
+function showToast(category, message) {
+    const container = document.getElementById("toast-container");
+
+    const toast = document.createElement("div");
+
+    toast.classList.add("toast", category);
+
+    toast.innerText = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
+}
+
+const flaskMessages = [
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        {category: "{{ category }}", message: "{{ message }}"},
+    {% endfor %}
+    {% endwith %}
+];
+
+flaskMessages.forEach(msg => {
+    showToast(msg.category, msg.message);
+});
+</script>
+
 </body>
 </html>

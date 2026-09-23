@@ -13,7 +13,7 @@
 <link rel="icon"
       href="{{ url_for('static', filename='icon/icon.png') }}">
 
-<title>Login - Xandão Finance</title>
+<title>Alterar Senha - Xandão Finance</title>
 
 </head>
 
@@ -53,20 +53,15 @@
 
     <div class="card-cadastro">
 
-        <h2>Entrar</h2>
+        <h2>Alterar Senha</h2>
 
-        <form action="/login" method="POST">
+        <form action="/esqueci_senha" method="POST">
 
-            <input
-                type="text"
-                name="email"
-                placeholder="email"
-                required>
 
             <input
                 type="password"
-                name="senha"
-                placeholder="Senha"
+                name="nova_senha"
+                placeholder="Nova Senha"
                 required>
 
             <button type="submit">
@@ -74,11 +69,8 @@
             </button>
 
 
-    <a href="/buscar_email" class="link-login">
-    Esqueci minha senha
-</a>
-</form>
-
+        </form>
+    
     </div>
 
 </div>

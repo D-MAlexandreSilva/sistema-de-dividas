@@ -1,4 +1,4 @@
-DATABASE_URL = "postgresql://alexandre_da_silva_de_maria_23qy_user:q5VqjXIxumTMhNZ9TkbEYK7lqv3pEMlm@dpg-d81lkd1j2pic73c3go6g-a.ohio-postgres.render.com/alexandre_da_silva_de_maria"
+DATABASE_URL = "postgresql://neondb_owner:npg_c0L9lbgoqPjm@ep-dry-surf-b6hoymnw-pooler.c-2.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
 SECRET_KEY = "minha_chave_secreta"
 

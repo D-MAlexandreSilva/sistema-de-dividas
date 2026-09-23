@@ -1,18 +1,31 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-br">
 
-{% block title %}Cadastro - Xandão Finance{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block content %}
+    <title>Cadastro - Xandão Finance</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="manifest" href="/static/manifest.json">
+
+    <meta name="theme-color" content="#0f172a">
+
+    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
+</head>
+
+<body>
 
 <div class="pagina-cadastro">
 
     <!-- 🔵 LADO ESQUERDO -->
     <div class="lado-esquerdo">
 
-        <img
-            src="{{ url_for('static', filename='icon/icon.png') }}"
-            alt="Logo"
-            class="logo-principal">
+        <img src="{{ url_for('static', filename='icon/icon.png') }}"
+             alt="Logo"
+             class="logo-principal">
 
         <h1>Xandão Finance</h1>
 
@@ -30,7 +43,7 @@
 
     </div>
 
-    <!-- 🟢 LADO DIREITO (FORMULÁRIO) -->
+    <!-- 🟢 LADO DIREITO -->
     <div class="lado-direito">
 
         <div class="card-cadastro">
@@ -39,7 +52,7 @@
 
             <form action="/cadastro" method="POST">
 
-                <input type="text" name="usuario" placeholder="Usuário" required>
+                <input type="text" name="email" placeholder="email" required>
 
                 <input type="password" name="senha" placeholder="Senha" required>
 
@@ -57,27 +70,17 @@
 
 </div>
 
-<!-- 🔔 TOAST NOTIFICATIONS (FLASH DO FLASK) -->
+<!-- 🔔 TOAST -->
 <div id="toast-container"></div>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <script>
-      const flaskMessages = [
-        {% for category, message in messages %}
-          {category: "{{ category }}", message: "{{ message }}"},
-        {% endfor %}
-      ];
-    </script>
-  {% endif %}
-{% endwith %}
 
 <script>
 function showToast(category, message) {
     const container = document.getElementById("toast-container");
 
     const toast = document.createElement("div");
+
     toast.classList.add("toast", category);
+
     toast.innerText = message;
 
     container.appendChild(toast);
@@ -87,18 +90,18 @@ function showToast(category, message) {
     }, 4000);
 }
 
-if (typeof flaskMessages !== "undefined") {
-    flaskMessages.forEach(msg => {
-        showToast(msg.category, msg.message);
-    });
-}
+const flaskMessages = [
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        {category: "{{ category }}", message: "{{ message }}"},
+    {% endfor %}
+    {% endwith %}
+];
+
+flaskMessages.forEach(msg => {
+    showToast(msg.category, msg.message);
+});
 </script>
 
-<!-- 📱 SERVICE WORKER -->
-<script>
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-}
-</script>
-
-{% endblock %}
+</body>
+</html>

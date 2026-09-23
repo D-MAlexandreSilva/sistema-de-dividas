@@ -11,82 +11,104 @@ def conectar():
         print("Erro ao conectar ao banco", erro)
         return None
     
+
 def criar_tabela():
+
     conn = conectar()
+
     if not conn:
         return
+
     try:
         cursor = conn.cursor()
-        cursor.execute("""CREATE TABLE IF NOT EXISTS usuariosap1 (
-                       id SERIAL PRIMARY KEY,
-                       usuario TEXT UNIQUE NOT NULL,
-                       senha TEXT NOT NULL,
-                       saldo NUMERIC(10,2) DEFAULT 0)""")
-        cursor.execute("""CREATE TABLE IF NOT EXISTS dividas (
-                       id SERIAL PRIMARY KEY,
-                       usuario_id INTEGER REFERENCES usuariosap1(id),
-                       tipo TEXT NOT NULL,
-                       descricao TEXT NOT NULL,
-                       valor NUMERIC(10,2) NOT NULL,
-                       parcelas_total INTEGER,
-                       parcelas_pagas INTEGER DEFAULT 0,
-                       vencimento DATE NOT NULL,
-                       status TEXT DEFAULT 'ativa')""")
-        cursor.execute("""CREATE TABLE IF NOT EXISTS gastos (
-                       id SERIAL PRIMARY KEY,
-                       usuario_id INTEGER REFERENCES usuariosap1(id),
-                       nome TEXT NOT NULL,
-                       descricao TEXT NOT NULL,
-                       valor NUMERIC(10,2) NOT NULL,
-                       data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
-        cursor.execute("""CREATE TABLE IF NOT EXISTS push_subscriptions (
-                       id SERIAL PRIMARY KEY,
-                       usuario_id INTEGER,
-                       endpoint TEXT NOT NULL,
-                       p256dh TEXT NOT NULL,
-                       auth TEXT NOT NULL,
-                       criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                       atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                        );""")
+
         cursor.execute("""
-            ALTER TABLE push_subscriptions
-            ADD COLUMN IF NOT EXISTS criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            CREATE TABLE IF NOT EXISTS usuariosap1 (
+                id SERIAL PRIMARY KEY,
+                email TEXT UNIQUE NOT NULL,
+                senha TEXT NOT NULL,
+                saldo NUMERIC(10,2) DEFAULT 0
+            )
         """)
+
         cursor.execute("""
-            ALTER TABLE push_subscriptions
-            ADD COLUMN IF NOT EXISTS atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            CREATE TABLE IF NOT EXISTS dividas (
+                id SERIAL PRIMARY KEY,
+                usuario_id INTEGER REFERENCES usuariosap1(id),
+                tipo TEXT NOT NULL,
+                descricao TEXT NOT NULL,
+                valor NUMERIC(10,2) NOT NULL,
+                parcelas_total INTEGER,
+                parcelas_pagas INTEGER DEFAULT 0,
+                vencimento DATE NOT NULL,
+                status TEXT DEFAULT 'ativa'
+            )
         """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS gastos (
+                id SERIAL PRIMARY KEY,
+                usuario_id INTEGER REFERENCES usuariosap1(id),
+                nome TEXT NOT NULL,
+                descricao TEXT NOT NULL,
+                valor NUMERIC(10,2) NOT NULL,
+                data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS push_subscriptions (
+                id SERIAL PRIMARY KEY,
+                usuario_id INTEGER,
+                endpoint TEXT NOT NULL,
+                p256dh TEXT NOT NULL,
+                auth TEXT NOT NULL,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
         cursor.execute("""
             CREATE UNIQUE INDEX IF NOT EXISTS idx_push_subscriptions_endpoint
             ON push_subscriptions(endpoint)
         """)
-        cursor.execute("""CREATE TABLE IF NOT EXISTS push_notificacoes_enviadas (
-                       id SERIAL PRIMARY KEY,
-                       usuario_id INTEGER NOT NULL,
-                       divida_id INTEGER NOT NULL,
-                       data_envio DATE NOT NULL,
-                       criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                       UNIQUE(usuario_id, divida_id, data_envio)
-                        );""")
-        
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS push_notificacoes_enviadas (
+                id SERIAL PRIMARY KEY,
+                usuario_id INTEGER NOT NULL,
+                divida_id INTEGER NOT NULL,
+                data_envio DATE NOT NULL,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(usuario_id, divida_id, data_envio)
+            )
+        """)
+
         conn.commit()
+
+        print("Tabelas criadas/verificadas com sucesso!")
+
     except Exception as erro:
-        print("Erro ao criar tabela:", erro)
+        conn.rollback()
+        print("Erro ao criar tabelas:", erro)
+
     finally:
         try:
             cursor.close()
         except:
             pass
+
         if conn:
             conn.close()
 
-def cadastrar_usuario(usuario, senha):
+
+def cadastrar_usuario(email, senha):
     conn = conectar()
     if not conn:
         return None
     try:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO usuariosap1 (usuario, senha) VALUES (%s, %s) RETURNING id", (usuario, senha))
+        cursor.execute("INSERT INTO usuariosap1 (email, senha) VALUES (%s, %s) RETURNING id", (email, senha))
         usuario_id = cursor.fetchone()[0]
         conn.commit()
         return usuario_id
@@ -102,13 +124,41 @@ def cadastrar_usuario(usuario, senha):
         if conn:
            conn.close()
 
-def login(usuario, senha):
+def buscar_email(email):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM usuariosap1 WHERE email = %s", (email,))
+    resultado = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return resultado
+
+def alterar_senha(id, senha_hash):
+
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "UPDATE usuariosap1 SET senha = %s WHERE id = %s",
+        (senha_hash, id)
+    )
+
+    conn.commit()
+
+    sucesso = cursor.rowcount > 0
+
+    cursor.close()
+    conn.close()
+
+    return sucesso
+
+def login(email, senha):
     conn = conectar()
     if not conn:
         return None
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT id, senha FROM usuariosap1 WHERE usuario = %s", (usuario,))
+        cursor.execute("SELECT id, senha FROM usuariosap1 WHERE email = %s", (email,))
         resultado = cursor.fetchone()
         if resultado and bcrypt.checkpw(senha.encode(),resultado[1].encode()):
             return resultado[0] 
