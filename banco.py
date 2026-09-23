@@ -417,6 +417,15 @@ def adicionar_gasto(usuario_id, nome, descricao, valor):
         cursor.close()
         conn.close()
 
+def excluir_gasto(id, usuario_id):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM gastos WHERE id = %s AND usuario_id = %s", (id, usuario_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return True
+
 def buscar_saldo(usuario_id):
     conn = conectar()
     if not conn:
@@ -452,7 +461,7 @@ def listar_gastos(usuario_id):
         cursor = conn.cursor()
 
         cursor.execute("""
-            SELECT nome, descricao, valor, data_hora
+            SELECT id, nome, descricao, valor, data_hora
             FROM gastos
             WHERE usuario_id = %s
             ORDER BY data_hora DESC
