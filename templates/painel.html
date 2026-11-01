@@ -1,22 +1,11 @@
-﻿<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+﻿
+{% extends "base.html" %}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block titulo %}
+Cadastrar Dívida - Xandão Finance
+{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="manifest" href="/static/manifest.json">
-
-    <meta name="theme-color" content="#0f172a">
-
-    <link rel="icon" href="{{ url_for('static', filename='icon/icon.png') }}">
-
-    <title>Cadastrar Dívida</title>
-
-</head>
-
-<body>
+{% block conteudo %}
 
 <div class="container">
 
@@ -38,11 +27,15 @@
                 <option>Pessoais</option>
             </select>
 
-            <input type="text" name="descricao" placeholder="Descrição" required>
+            <input type="text" name="descricao"
+                   placeholder="Descrição" required>
 
-            <input type="number" name="valor" step="0.01" min="0" placeholder="Valor da parcela" required>
+            <input type="number" name="valor"
+                   step="0.01" min="0"
+                   placeholder="Valor da parcela" required>
 
-            <input type="number" name="parcelas_total" min="1" placeholder="Parcelas" required>
+            <input type="number" name="parcelas_total"
+                   min="1" placeholder="Parcelas" required>
 
             <label>Vencimento</label>
 
@@ -54,7 +47,6 @@
 
         </form>
 
-        <!-- AÇÕES EM BOTÕES (NÃO LINKS MAIS) -->
         <div class="acoes-form">
 
             <a href="/dividas" class="btn-secundario">
@@ -65,49 +57,106 @@
                 ⬅ Voltar ao menu
             </a>
 
+            <button type="button" id="ativar-notificacoes">
+                🔔 Ativar notificações
+            </button>
+
         </div>
 
     </div>
 
 </div>
 
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-}
-</script>
+{% endblock %}
 
-<div id="toast-container"></div>
+
+{% block scripts %}
 
 <script>
-function showToast(category, message) {
-    const container = document.getElementById("toast-container");
+const VAPID_PUBLIC_KEY = {{ vapid_public_key | tojson }};
 
-    const toast = document.createElement("div");
+function urlBase64ToUint8Array(base64String) {
 
-    toast.classList.add("toast", category);
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
 
-    toast.innerText = message;
+    const base64 = (base64String + padding)
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
 
-    container.appendChild(toast);
+    const rawData = window.atob(base64);
 
-    setTimeout(() => {
-        toast.remove();
-    }, 4000);
+    return Uint8Array.from(
+        [...rawData].map(char => char.charCodeAt(0))
+    );
 }
 
-const flaskMessages = [
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-        {category: "{{ category }}", message: "{{ message }}"},
-    {% endfor %}
-    {% endwith %}
-];
+document.getElementById("ativar-notificacoes")
+    .addEventListener("click", async () => {
 
-flaskMessages.forEach(msg => {
-    showToast(msg.category, msg.message);
+    try {
+
+        if (!("Notification" in window) ||
+            !("serviceWorker" in navigator)) {
+
+            alert("Seu navegador não suporta notificações.");
+            return;
+        }
+
+        const permissao = await Notification.requestPermission();
+
+        if (permissao !== "granted") {
+
+            alert("Permissão para notificações não concedida.");
+            return;
+        }
+
+        const registro = await navigator.serviceWorker.ready;
+
+        let inscricao = await registro.pushManager.getSubscription();
+
+        if (!inscricao) {
+
+            inscricao = await registro.pushManager.subscribe({
+
+                userVisibleOnly: true,
+
+                applicationServerKey:
+                    urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+
+            });
+        }
+
+        const resposta = await fetch("/save-subscription", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            credentials: "same-origin",
+
+            body: JSON.stringify(inscricao)
+
+        });
+
+        const resultado = await resposta.json();
+
+        if (!resposta.ok || !resultado.ok) {
+
+            throw new Error("Não foi possível salvar a inscrição.");
+        }
+
+        alert("Notificações ativadas com sucesso!");
+
+    } catch (erro) {
+
+        console.error("Erro nas notificações:", erro);
+
+        alert("Erro ao ativar notificações. Consulte o console.");
+    }
+
 });
 </script>
 
-</body>
-</html>
+{% endblock %}
