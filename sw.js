@@ -23,9 +23,9 @@ self.addEventListener("push", (event) => {
 
     event.waitUntil(
         self.registration.showNotification(dados.title, {
-            body: dados.body,
-            icon: "/static/img/icon-192.png",
-            badge: "/static/img/icon-192.png"
+             body: dados.body,
+             icon: "/static/img/icon-192.png",
+            badge: "/static/img/badge-96.png"
         })
     );
 });
